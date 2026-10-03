@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}{% load static %}
+{% block hero %}
+<div class="hero"><div class="wrap"><div>
+<h1>Achetez sur Shein et Alibaba <em>en toute confiance.</em></h1>
+<p>Nous validons votre panier avant paiement, organisons des groupages Alibaba et vous formons à importer par vous-même. Paiement simple par Wave.</p>
+<a class="btn sun" href="{% url 'shein_new' %}">Faire valider mon panier</a>
+<a class="btn line" href="{% url 'groupages' %}">Voir les groupages</a>
+</div><div class="hero-logo"><img src="{% static 'core/logo.png' %}" alt=""></div></div></div>
+{% endblock %}
+{% block content %}
+<section><h2>Comment ça marche</h2>
+<div class="grid">
+<div class="card step"><b>1</b><h3>Envoyez votre panier</h3><p class="mute">Lien ou capture d'écran, depuis votre téléphone.</p></div>
+<div class="card step"><b>2</b><h3>Nous le validons</h3><p class="mute">Vous recevez le montant exact à payer.</p></div>
+<div class="card step"><b>3</b><h3>Payez avec Wave</h3><p class="mute">Suivez votre commande jusqu'à la livraison.</p></div>
+</div></section>
+<section><h2>Groupages ouverts</h2>
+<div class="grid">{% for g in groupages %}
+<div class="card"><h3>{{ g.title }}</h3><p class="mute">Inscription jusqu'au {{ g.deadline|date:"d/m/Y" }}</p><a class="btn" href="{% url 'groupage_join' g.pk %}">S'inscrire</a></div>
+{% empty %}<p class="mute">Aucun groupage ouvert pour le moment. Écrivez-nous sur WhatsApp pour être prévenue du prochain.</p>{% endfor %}</div></section>
+<section><h2>Formations</h2>
+<div class="grid">{% for f in formations %}
+<div class="card"><h3>{{ f.title }}</h3><p class="mute">{{ f.price_fcfa }} FCFA</p><a class="btn line" href="{% url 'formation_detail' f.slug %}">Voir la formation</a></div>
+{% empty %}<p class="mute">Les formations arrivent bientôt.</p>{% endfor %}</div></section>
+{% endblock %}

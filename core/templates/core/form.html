@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+{% block content %}
+<section><h2>{{ title }}</h2>
+<form class="box" method="post"{% if multipart %} enctype="multipart/form-data"{% endif %}>
+{% csrf_token %}{{ form.as_p }}
+<button class="btn" type="submit">{{ cta }}</button>
+</form></section>
+{% endblock %}

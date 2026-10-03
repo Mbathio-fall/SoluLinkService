@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block content %}
+<section><h2>Mes demandes Shein</h2>
+{% if shein %}<div class="tbl"><table>
+{% for o in shein %}<tr><td>#{{ o.pk }} · {{ o.created|date:"d/m/Y" }}</td><td><span class="tag {{ o.status }}">{{ o.get_status_display }}</span></td>
+<td>{% if o.amount_fcfa %}{{ o.amount_fcfa }} FCFA{% endif %}</td>
+<td>{% if o.can_pay %}{% include "core/_pay.html" with amount=o.amount_fcfa ref=o.pay_ref link=o.payment_link %}{% endif %}</td></tr>{% endfor %}
+</table></div>{% else %}<p class="mute">Aucune demande. <a href="{% url 'shein_new' %}">Envoyer un panier</a></p>{% endif %}</section>
+
+<section><h2>Mes groupages</h2>
+{% if regs %}<div class="tbl"><table>
+{% for o in regs %}<tr><td>{{ o.groupage.title }}{% if o.article %} · {{ o.article.name }} ×{{ o.quantity }} ({{ o.get_mode_display }}){% endif %}</td><td><span class="tag {{ o.status }}">{{ o.get_status_display }}</span></td>
+<td>{% if o.amount_fcfa %}{{ o.amount_fcfa }} FCFA{% endif %}</td>
+<td>{% if o.can_pay %}{% include "core/_pay.html" with amount=o.amount_fcfa ref=o.pay_ref link=o.payment_link %}{% endif %}</td></tr>{% endfor %}
+</table></div>{% else %}<p class="mute">Aucune inscription. <a href="{% url 'groupages' %}">Voir les groupages</a></p>{% endif %}</section>
+
+<section><h2>Mes formations</h2>
+{% if enrollments %}<div class="tbl"><table>
+{% for e in enrollments %}<tr><td>{{ e.formation.title }} <span class="mute">· {{ e.get_mode_display }}</span></td><td><span class="tag {{ e.status }}">{{ e.get_status_display }}</span></td>
+<td><a href="{% url 'formation_detail' e.formation.slug %}">{% if e.paid %}Accéder{% else %}Voir{% endif %}</a></td></tr>{% endfor %}
+</table></div>{% else %}<p class="mute">Aucune formation. <a href="{% url 'formations' %}">Voir le catalogue</a></p>{% endif %}</section>
+{% endblock %}

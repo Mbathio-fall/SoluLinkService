@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}{% load humanize %}
+{% block content %}
+<section><h2>Groupages Alibaba</h2>
+<p class="mute">Le transport est partagé entre toutes les participantes : vous payez l'article et votre part de transport.</p>
+{% for g in items %}
+<div class="card" style="margin-bottom:22px">
+<h3>{{ g.title }}</h3>
+{% if g.description %}<p>{{ g.description|linebreaksbr }}</p>{% endif %}
+<p class="chips"><span>Avion : {{ g.air_delay }}</span><span>Bateau : {{ g.sea_delay }}</span><span>Inscription jusqu'au {{ g.deadline|date:"d/m/Y" }}</span></p>
+<div class="grid" style="margin-top:14px">
+{% for a in g.articles.all %}
+<div class="card prod">
+{% if a.image %}<img src="{{ a.image.url }}" alt="{{ a.name }}">{% endif %}
+<h3>{{ a.name }}</h3>{% if a.description %}<p class="mute">{{ a.description }}</p>{% endif %}
+<table class="mini">
+<tr><td>Article</td><td>{{ a.price_fcfa|intcomma }} FCFA</td></tr>
+{% if a.transport_air_fcfa is not None %}<tr><td>Transport avion</td><td>{{ a.transport_air_fcfa|intcomma }} FCFA</td></tr>
+<tr class="tot"><td>Total avion</td><td>{{ a.total_air|intcomma }} FCFA</td></tr>{% endif %}
+{% if a.transport_sea_fcfa is not None %}<tr><td>Transport bateau</td><td>{{ a.transport_sea_fcfa|intcomma }} FCFA</td></tr>
+<tr class="tot"><td>Total bateau</td><td>{{ a.total_sea|intcomma }} FCFA</td></tr>{% endif %}
+</table>
+<a class="btn sun" href="{% url 'groupage_join' g.pk %}?article={{ a.pk }}">Je participe</a>
+</div>
+{% empty %}<p class="mute">Les articles arrivent bientôt.</p>{% endfor %}
+</div></div>
+{% empty %}<p class="mute">Aucun groupage ouvert pour le moment. Écrivez-nous sur WhatsApp pour être prévenue du prochain.</p>{% endfor %}
+</section>
+{% endblock %}

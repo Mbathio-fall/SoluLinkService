@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}{% load humanize %}
+{% block content %}
+<section><h2>Nos formations</h2>
+<div class="grid">{% for f in items %}
+<div class="card">
+<h3>{{ f.title }}</h3>
+{% if f.tagline %}<p>{{ f.tagline }}</p>{% endif %}
+<p class="chips"><span>{{ f.duration_days }} jours</span><span>Présentiel ou en ligne</span></p>
+<p><b class="price">{{ f.price_fcfa|intcomma }} FCFA</b></p>
+<a class="btn" href="{% url 'formation_detail' f.slug %}">Voir la formation</a></div>
+{% empty %}<p class="mute">Les formations arrivent bientôt.</p>{% endfor %}</div></section>
+{% endblock %}

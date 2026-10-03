@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block content %}
+<section><h2>Connexion</h2>
+<form class="box" method="post">{% csrf_token %}{{ form.as_p }}
+<input type="hidden" name="next" value="{{ next }}">
+<button class="btn" type="submit">Me connecter</button>
+<p class="mute" style="margin-top:14px">Pas encore de compte ? <a href="{% url 'signup' %}">Créer un compte</a></p>
+</form></section>
+{% endblock %}

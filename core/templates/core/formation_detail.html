@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}{% load humanize %}
+{% block title %}{{ f.title }} · Solu Link Service{% endblock %}
+{% block hero %}
+<div class="hero small"><div class="wrap"><div>
+<h1>{{ f.title }}</h1>
+{% if f.tagline %}<p>{{ f.tagline }}</p>{% endif %}
+<p class="chips light"><span>{{ f.duration_days }} jours</span><span>{{ f.price_fcfa|intcomma }} FCFA</span><span>Présentiel ou en ligne</span>
+{% if f.rhythm %}<span>{{ f.rhythm }}</span>{% endif %}{% if f.next_session %}<span>Prochaine session : {{ f.next_session|date:"d/m/Y" }}</span>{% endif %}</p>
+</div></div></div>
+{% endblock %}
+{% block content %}
+<div class="detail">
+<div class="detail-main">
+<section><h2>À propos</h2><p>{{ f.description|linebreaksbr }}</p></section>
+{% if f.audience_list %}<section><h2>Pour qui ?</h2><ul class="checks">{% for a in f.audience_list %}<li>{{ a }}</li>{% endfor %}</ul></section>{% endif %}
+{% if f.objectives_list %}<section><h2>Ce que vous allez apprendre</h2><ul class="checks">{% for o in f.objectives_list %}<li>{{ o }}</li>{% endfor %}</ul></section>{% endif %}
+{% if f.program_list %}<section><h2>Programme des {{ f.duration_days }} jours</h2>
+<ol class="days">{% for t, d in f.program_list %}<li><b>{{ t }}</b>{% if d %}<span>{{ d }}</span>{% endif %}</li>{% endfor %}</ol></section>{% endif %}
+<section><h2>Deux façons de suivre la formation</h2>
+<div class="grid">
+<div class="card"><h3>En présentiel</h3><p class="mute">Pour celles qui sont proches de nous.</p><p>{{ f.onsite_place|default:"Lieu communiqué après l'inscription." }}</p></div>
+<div class="card"><h3>En ligne</h3><p class="mute">Pour celles qui sont loin.</p><p>{{ f.online_info|default:"En visio, avec un groupe WhatsApp." }}</p></div>
+</div>{% if f.rhythm %}<p class="mute" style="margin-top:12px">Rythme : {{ f.rhythm }}</p>{% endif %}</section>
+{% if f.instructor_bio %}<section><h2>Votre formatrice</h2><p>{{ f.instructor_bio|linebreaksbr }}</p></section>{% endif %}
+{% if f.testimonials_list %}<section><h2>Témoignages</h2><div class="grid">{% for n, t in f.testimonials_list %}<div class="card"><p>« {{ t }} »</p><b>{{ n }}</b></div>{% endfor %}</div></section>{% endif %}
+{% if f.faq_list %}<section><h2>Questions fréquentes</h2>{% for q, a in f.faq_list %}<details class="card faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}</section>{% endif %}
+</div>
+
+<aside class="signup card">
+<p class="price big">{{ f.price_fcfa|intcomma }} FCFA</p>
+<p class="mute">{{ f.duration_days }} jours · présentiel ou en ligne</p>
+{% if enr and enr.paid %}
+  <p><span class="tag paye">Inscription confirmée</span></p>
+  <p class="mute">{{ enr.get_mode_display }}</p>
+  {% if f.content_url %}<a class="btn sun" href="{{ f.content_url }}">Accéder au contenu</a>{% else %}<p class="mute">Les détails vous sont envoyés par WhatsApp.</p>{% endif %}
+{% elif enr %}
+  <p><span class="tag valide">En attente de paiement</span></p>
+  <p class="mute">{{ enr.get_mode_display }}</p>
+  {% include "core/_pay.html" with amount=f.price_fcfa ref=enr.pay_ref link=f.wave_link %}
+  <p class="mute">Votre place est confirmée dès que nous recevons le paiement.</p>
+{% elif user.is_authenticated %}
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn sun" type="submit">M'inscrire</button></form>
+{% else %}
+  <a class="btn sun" href="{% url 'signup' %}">Créer un compte pour m'inscrire</a>
+  <p class="mute" style="margin-top:10px">Déjà un compte ? <a href="{% url 'login' %}?next={{ request.path }}">Connexion</a></p>
+{% endif %}
+</aside>
+</div>
+{% endblock %}

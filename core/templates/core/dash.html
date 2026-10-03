@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}{% load humanize %}
+{% block title %}Tableau de bord · Solu Link Service{% endblock %}
+{% block content %}
+<section>
+<div class="dash-head"><h2>Tableau de bord</h2><a class="btn line" href="{% url 'admin:index' %}">Ouvrir l'administration</a></div>
+<div class="kpis">
+<div class="kpi accent"><span>À traiter</span><b>{{ pending }}</b><small>demandes en attente</small></div>
+<div class="kpi"><span>Chiffre d'affaires</span><b>{{ ca_total|intcomma }}</b><small>FCFA encaissés</small></div>
+<div class="kpi"><span>Clients</span><b>{{ clients }}</b><small>comptes créés</small></div>
+<div class="kpi"><span>Formations vendues</span><b>{{ formations_paid }}</b><small>{{ ca_form|intcomma }} FCFA</small></div>
+</div>
+<div class="two">
+<div class="card"><h3>Chiffre d'affaires, 6 derniers mois</h3>
+<div class="cols">{% for m in months %}<div class="col"><span>{{ m.v|intcomma }}</span><div class="bar"><i style="height:{{ m.pct }}%"></i></div>{{ m.label }}</div>{% endfor %}</div></div>
+<div class="card"><h3>Commandes par statut</h3>
+{% for c in counts %}<div class="hbar"><span>{{ c.label }}</span><i style="width:{{ c.pct }}%"></i><b>{{ c.n }}</b></div>{% endfor %}
+<div class="split" style="margin-top:18px"><h3>Répartition du CA (FCFA)</h3>
+<p><span>Paniers Shein</span><b>{{ ca_shein|intcomma }}</b></p>
+<p><span>Groupages Alibaba</span><b>{{ ca_regs|intcomma }}</b></p>
+<p><span>Formations</span><b>{{ ca_form|intcomma }}</b></p></div></div>
+</div>
+<h2>Participations par article</h2>
+<div class="tbl"><table><tr><th>Groupage</th><th>Article</th><th>Quantité demandée</th></tr>
+{% for a in articles %}<tr><td>{{ a.groupage.title }}</td><td>{{ a.name }}</td><td><b>{{ a.n|default:0 }}</b></td></tr>
+{% empty %}<tr><td colspan="3" class="mute">Aucun article pour le moment.</td></tr>{% endfor %}</table></div>
+<h2 style="margin-top:26px">Dernières demandes</h2>
+<div class="tbl"><table>
+<tr><th>Type</th><th>Client</th><th>WhatsApp</th><th>Statut</th><th>Montant</th><th>Date</th></tr>
+{% for r in recent %}<tr><td><a href="{{ r.url }}">{{ r.kind }} #{{ r.obj.pk }}</a></td><td>{{ r.obj.user }}</td><td>{{ r.obj.whatsapp }}</td>
+<td><span class="tag {{ r.obj.status }}">{{ r.obj.get_status_display }}</span></td>
+<td>{% if r.obj.amount_fcfa %}{{ r.obj.amount_fcfa|intcomma }} FCFA{% endif %}</td><td>{{ r.obj.created|date:"d/m/Y" }}</td></tr>
+{% empty %}<tr><td colspan="6" class="mute">Aucune demande pour le moment.</td></tr>{% endfor %}
+</table></div>
+</section>
+{% endblock %}

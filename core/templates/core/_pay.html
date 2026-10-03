@@ -1,0 +1,7 @@
+{% load humanize %}<div class="pay">
+{% if link %}<a class="btn sun" href="{{ link }}">Payer avec Wave</a>
+{% else %}<b>Payez {{ amount|intcomma }} FCFA par Wave</b>
+<span class="num">au {{ WAVE_NUMBER }}</span>
+<small>Nom affiché sur Wave : <b>{{ WAVE_NAME }}</b></small>
+<small>Indiquez la référence <b>{{ ref }}</b> dans votre paiement.</small>{% endif %}
+</div>
