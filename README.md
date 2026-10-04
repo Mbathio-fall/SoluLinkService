@@ -29,7 +29,7 @@ Site : http://127.0.0.1:8000 · Admin : http://127.0.0.1:8000/admin
 2. Render > New > PostgreSQL (offre payante pour un vrai site : la base gratuite expire après 30 jours).
 3. Render > New > Web Service, relié au dépôt GitHub :
    - Build Command : `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-   - Start Command : `python manage.py migrate --noinput && python manage.py createsuperuser --noinput || true; python manage.py seed_formation; python manage.py seed_groupage; gunicorn config.wsgi`
+   - Start Command : `python manage.py migrate --noinput && python manage.py ensure_admin; python manage.py seed_formation; python manage.py seed_groupage; gunicorn config.wsgi`
 4. Ajoutez un **Disk** (offre payante) monté sur `/var/data`, et la variable `MEDIA_ROOT=/var/data/media` : sans disque, les photos sont effacées à chaque déploiement.
 5. Variables d'environnement (voir `.env.example`) : SECRET_KEY, DEBUG=0, ALLOWED_HOSTS, CSRF_TRUSTED_ORIGINS, DATABASE_URL (lien interne de la base), WHATSAPP_NUMBER, WAVE_NUMBER, WAVE_NAME, SITE_URL, EMAIL_*, et pour créer l'administrateur : DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL, DJANGO_SUPERUSER_PASSWORD.
 6. Domaine : Settings > Custom Domains, puis les enregistrements DNS demandés. Le HTTPS est automatique.
