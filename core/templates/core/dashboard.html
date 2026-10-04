@@ -1,22 +1,35 @@
-{% extends "core/base.html" %}
+{% extends "core/base.html" %}{% load humanize %}
+{% block title %}Mon espace · Solu Link Service{% endblock %}
 {% block content %}
-<section><h2>Mes demandes Shein</h2>
-{% if shein %}<div class="tbl"><table>
+<section>
+<h2>Bonjour {{ user.username }}</h2>
+{% if to_pay %}<div class="msg">Vous avez <b>{{ to_pay }}</b> commande{{ to_pay|pluralize }} à payer. Les consignes de paiement sont indiquées plus bas.</div>{% endif %}
+<div class="grid tiles">
+<div class="card tile"><h3>Validation Shein</h3><b class="big-n">{{ shein|length }}</b><p class="mute">demande{{ shein|length|pluralize }} envoyée{{ shein|length|pluralize }}</p><a class="btn" href="{% url 'shein_new' %}">Envoyer un panier</a></div>
+<div class="card tile"><h3>Groupages Alibaba</h3><b class="big-n">{{ regs|length }}</b><p class="mute">inscription{{ regs|length|pluralize }}</p><a class="btn" href="{% url 'groupages' %}">Voir les groupages</a></div>
+<div class="card tile"><h3>Formations</h3><b class="big-n">{{ enrollments|length }}</b><p class="mute">inscription{{ enrollments|length|pluralize }}</p><a class="btn" href="{% url 'formations' %}">Voir les formations</a></div>
+</div>
+</section>
+
+{% if shein %}<section><h2>Mes demandes Shein</h2><div class="tbl"><table>
+<tr><th>Demande</th><th>Statut</th><th>Montant</th><th>Paiement</th></tr>
 {% for o in shein %}<tr><td>#{{ o.pk }} · {{ o.created|date:"d/m/Y" }}</td><td><span class="tag {{ o.status }}">{{ o.get_status_display }}</span></td>
-<td>{% if o.amount_fcfa %}{{ o.amount_fcfa }} FCFA{% endif %}</td>
+<td>{% if o.amount_fcfa %}{{ o.amount_fcfa|intcomma }} FCFA{% endif %}</td>
 <td>{% if o.can_pay %}{% include "core/_pay.html" with amount=o.amount_fcfa ref=o.pay_ref link=o.payment_link %}{% endif %}</td></tr>{% endfor %}
-</table></div>{% else %}<p class="mute">Aucune demande. <a href="{% url 'shein_new' %}">Envoyer un panier</a></p>{% endif %}</section>
+</table></div></section>{% endif %}
 
-<section><h2>Mes groupages</h2>
-{% if regs %}<div class="tbl"><table>
-{% for o in regs %}<tr><td>{{ o.groupage.title }}{% if o.article %} · {{ o.article.name }} ×{{ o.quantity }} ({{ o.get_mode_display }}){% endif %}</td><td><span class="tag {{ o.status }}">{{ o.get_status_display }}</span></td>
-<td>{% if o.amount_fcfa %}{{ o.amount_fcfa }} FCFA{% endif %}</td>
+{% if regs %}<section><h2>Mes groupages</h2><div class="tbl"><table>
+<tr><th>Groupage</th><th>Statut</th><th>Montant</th><th>Paiement</th></tr>
+{% for o in regs %}<tr><td>{{ o.groupage.title }}{% if o.article %}<br><span class="mute">{{ o.article.name }} ×{{ o.quantity }} · {{ o.get_mode_display }}</span>{% endif %}</td>
+<td><span class="tag {{ o.status }}">{{ o.get_status_display }}</span></td>
+<td>{% if o.amount_fcfa %}{{ o.amount_fcfa|intcomma }} FCFA{% endif %}</td>
 <td>{% if o.can_pay %}{% include "core/_pay.html" with amount=o.amount_fcfa ref=o.pay_ref link=o.payment_link %}{% endif %}</td></tr>{% endfor %}
-</table></div>{% else %}<p class="mute">Aucune inscription. <a href="{% url 'groupages' %}">Voir les groupages</a></p>{% endif %}</section>
+</table></div></section>{% endif %}
 
-<section><h2>Mes formations</h2>
-{% if enrollments %}<div class="tbl"><table>
-{% for e in enrollments %}<tr><td>{{ e.formation.title }} <span class="mute">· {{ e.get_mode_display }}</span></td><td><span class="tag {{ e.status }}">{{ e.get_status_display }}</span></td>
-<td><a href="{% url 'formation_detail' e.formation.slug %}">{% if e.paid %}Accéder{% else %}Voir{% endif %}</a></td></tr>{% endfor %}
-</table></div>{% else %}<p class="mute">Aucune formation. <a href="{% url 'formations' %}">Voir le catalogue</a></p>{% endif %}</section>
+{% if enrollments %}<section><h2>Mes formations</h2><div class="tbl"><table>
+<tr><th>Formation</th><th>Statut</th><th></th></tr>
+{% for e in enrollments %}<tr><td>{{ e.formation.title }}<br><span class="mute">{{ e.get_mode_display }}</span></td>
+<td><span class="tag {{ e.status }}">{{ e.get_status_display }}</span></td>
+<td><a class="btn line" href="{% url 'formation_detail' e.formation.slug %}">{% if e.paid %}Accéder{% else %}Voir et payer{% endif %}</a></td></tr>{% endfor %}
+</table></div></section>{% endif %}
 {% endblock %}

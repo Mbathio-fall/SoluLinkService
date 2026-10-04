@@ -25,10 +25,12 @@ def signup(request):
 @login_required
 def dashboard(request):
     u = request.user
+    shein = list(SheinRequest.objects.filter(user=u))
+    regs = list(GroupageRegistration.objects.filter(user=u).select_related("groupage", "article"))
+    enrollments = list(Enrollment.objects.filter(user=u).select_related("formation"))
     return render(request, "core/dashboard.html", {
-        "shein": SheinRequest.objects.filter(user=u),
-        "regs": GroupageRegistration.objects.filter(user=u).select_related("groupage"),
-        "enrollments": Enrollment.objects.filter(user=u).select_related("formation"),
+        "shein": shein, "regs": regs, "enrollments": enrollments,
+        "to_pay": sum(1 for o in shein + regs if o.can_pay),
     })
 
 
