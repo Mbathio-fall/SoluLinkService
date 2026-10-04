@@ -15,7 +15,6 @@
 <a href="{% url 'shein_new' %}">Validation Shein</a>
 <a href="{% url 'groupages' %}">Groupages Alibaba</a>
 <a href="{% url 'formations' %}">Formations</a>
-{% if user.is_staff %}<a href="{% url 'admin_dashboard' %}">Tableau de bord</a>{% endif %}
 </div>
 <div class="auth">
 {% if user.is_authenticated %}
