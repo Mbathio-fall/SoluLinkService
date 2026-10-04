@@ -52,6 +52,12 @@ STORAGES = {
 }
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", BASE_DIR / "media"))
+try:  # si le dossier demandé n'est pas utilisable (pas de disque), on revient au dossier du projet
+    MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+    if not os.access(MEDIA_ROOT, os.W_OK):
+        raise OSError
+except OSError:
+    MEDIA_ROOT = BASE_DIR / "media"
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "home"
